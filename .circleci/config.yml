@@ -24,3 +24,12 @@ workflows:
   build:
     jobs:
       - orb-tools/lint
+      - orb-tools/publish-dev:
+          checkout: true
+          orb-name: octopus-samples/octo-exp
+          orb-path: orb.yml
+          publish-alpha-version: false
+          publish-sha-version: false
+          publish-branch-sha-version: true
+          requires:
+            - orb-tools/lint
