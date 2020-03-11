@@ -1,0 +1,108 @@
+parameters:
+  package_id:
+    type: string
+  version:
+    type: string
+  overwrite_mode:
+    type: string
+    default: "FailIfExists"
+  git_url:
+    type: string
+    default: ""
+  space:
+    type: string
+    default: ""
+  server:
+    type: string
+    default: ""
+  api_key:
+    type: string
+    default: ""
+  user:
+    type: string
+    default: ""
+  pass:
+    type: string
+    default: ""
+  config_file:
+    type: string
+    default: ""
+  debug:
+    type: boolean
+    default: false
+  ignore_ssl_errors:
+    type: boolean
+    default: false
+  timeout:
+    type: string
+    default: ""
+  proxy:
+    type: string
+    default: ""
+  proxy_user:
+    type: string
+    default: ""
+  proxy_pass:
+    type: string
+    default: ""
+  log_level:
+    type: string
+    default: ""
+steps:
+  - run:
+      name: "Push build information for << parameters.package_id >>"
+      command: |
+        apt -y install git curl jq
+
+        get_string_value() {
+          if test "$2"; then
+            PARAMS+=("--$1=$2")
+          fi
+        }
+
+        get_switch_value() {
+          if test $2 = "true"; then
+            PARAMS+=("--$1")
+          fi
+        }
+
+        cat >> << parameters.package_id >>.json \<<EOL
+        {
+          BuildEnvironment: "CircleCI",
+          BuildNumber: "$CIRCLE_BUILD_NUM",
+          BuildUrl: "$CIRCLE_BUILD_URL",
+          Branch: "$CIRCLE_BRANCH",
+          VcsType: "Git",
+          VcsCommitUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
+          Commits: [
+            {
+              Id: "$CIRCLE_SHA1",
+              LinkUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
+              Comment: ""
+            }
+          ]
+        }
+        EOL
+
+        cat << parameters.package_id >>.json
+
+        PARAMS=("--file=<< parameters.package_id >>.json")
+
+        get_string_value server "<< parameters.server >>"
+        get_string_value apiKey "<< parameters.api_key >>"
+        get_string_value space "<< parameters.space >>"
+        get_string_value package-id "<< parameters.package_id >>"
+        get_string_value version "<< parameters.version >>"
+        get_string_value overwrite-mode "<< parameters.overwrite_mode >>"
+        get_string_value user "<< parameters.user >>"
+        get_string_value pass "<< parameters.pass >>"
+        get_string_value configFile "<< parameters.config_file >>"
+        get_string_value timeout "<< parameters.timeout >>"
+        get_string_value proxy "<< parameters.proxy >>"
+        get_string_value proxyUser "<< parameters.proxy_user >>"
+        get_string_value proxyPass "<< parameters.proxy_pass >>"
+        get_string_value logLevel "<< parameters.log_level >>"
+        get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"
+        get_switch_value debug "<< parameters.debug >>"
+
+        octo build-information "${PARAMS[@]}"

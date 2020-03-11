@@ -1,0 +1,82 @@
+parameters:
+  package:
+    type: string
+  overwrite_mode:
+    type: string
+    default: "FailIfExists"
+  use_delta_compression:
+    type: boolean
+    default: true
+  space:
+    type: string
+    default: ""
+  server:
+    type: string
+    default: ""
+  api_key:
+    type: string
+    default: ""
+  user:
+    type: string
+    default: ""
+  pass:
+    type: string
+    default: ""
+  config_file:
+    type: string
+    default: ""
+  debug:
+    type: boolean
+    default: false
+  ignore_ssl_errors:
+    type: boolean
+    default: false
+  timeout:
+    type: string
+    default: ""
+  proxy:
+    type: string
+    default: ""
+  proxy_user:
+    type: string
+    default: ""
+  proxy_pass:
+    type: string
+    default: ""
+  log_level:
+    type: string
+    default: ""
+steps:
+  - run:
+      name: "Push << parameters.package >>"
+      command: |
+        get_string_value() {
+          if test "$2"; then
+            PARAMS+=("--$1=$2")
+          fi
+        }
+
+        get_switch_value() {
+          if test $2 = "true"; then
+            PARAMS+=("--$1")
+          fi
+        }
+
+        get_string_value server "<< parameters.server >>"
+        get_string_value apiKey "<< parameters.api_key >>"
+        get_string_value space "<< parameters.space >>"
+        get_string_value package "<< parameters.package >>"
+        get_string_value overwrite-mode "<< parameters.overwrite_mode >>"
+        get_string_value use-delta-compression "<< parameters.use_delta_compression >>"
+        get_string_value user "<< parameters.user >>"
+        get_string_value pass "<< parameters.pass >>"
+        get_string_value configFile "<< parameters.config_file >>"
+        get_string_value timeout "<< parameters.timeout >>"
+        get_string_value proxy "<< parameters.proxy >>"
+        get_string_value proxyUser "<< parameters.proxy_user >>"
+        get_string_value proxyPass "<< parameters.proxy_pass >>"
+        get_string_value logLevel "<< parameters.log_level >>"
+        get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"
+        get_switch_value debug "<< parameters.debug >>"
+
+        octo push "${PARAMS[@]}"

@@ -1,0 +1,31 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools@8.14.0
+
+workflows:
+  # build runs on checkins
+  build:
+    jobs:
+      package:
+        docker:
+          - image: ubuntu:18.04
+        steps:
+          name: Create dev folder
+          command: |
+            mkdir dev
+            touch ./dev/orb.yml
+      - persist_to_workspace:
+          root: dev
+          paths:
+            - orb.yml
+      - orb-tools/lint
+      - orb-tools/pack:
+          attach-workspace: true
+          workspace-root: dev
+          workspace-path: orb.yml
+          source-dir: ./octo
+          destination-orb-path: /dev/orb.yml
+          artifact-path: dev
+          requires:
+            - orb-tools/lint

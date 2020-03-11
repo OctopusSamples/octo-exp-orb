@@ -1,0 +1,166 @@
+parameters:
+  project:
+    type: string
+  release_number:
+    type: string
+    default: ""
+  channel:
+    type: string
+    default: ""
+  progress:
+    type: boolean
+    default: false
+  force_package_download:
+    type: boolean
+    default: false
+  wait_for_deployment:
+    type: boolean
+    default: false
+  deployment_timeout:
+    type: string
+    default: ""
+  cancel_on_timeout:
+    type: boolean
+    default: false
+  deployment_check_sleep_cycle:
+    type: string
+    default: ""
+  guided_failure:
+    type: string
+    default: ""
+  specific_machines:
+    type: string
+    default: ""
+  exclude_machines:
+    type: string
+    default: ""
+  force:
+    type: boolean
+    default: false
+  skip:
+    type: string
+    default: ""
+  no_raw_log:
+    type: boolean
+    default: false
+  raw_log_file:
+    type: string
+    default: ""
+  variable:
+    type: string
+    default: ""
+  deploy_at:
+    type: string
+    default: ""
+  no_deploy_after:
+    type: string
+    default: ""
+  tenant:
+    type: string
+    default: ""
+  tenant_tag:
+    type: string
+    default: ""
+  deploy_to:
+    type: string
+    default: ""
+  update_variables:
+    type: boolean
+    default: false
+  server:
+    type: string
+    default: ""
+  api_key:
+    type: string
+    default: ""
+  user:
+    type: string
+    default: ""
+  pass:
+    type: string
+    default: ""
+  config_file:
+    type: string
+    default: ""
+  debug:
+    type: boolean
+    default: false
+  ignore_ssl_errors:
+    type: boolean
+    default: false
+  timeout:
+    type: string
+    default: ""
+  proxy:
+    type: string
+    default: ""
+  proxy_user:
+    type: string
+    default: ""
+  proxy_pass:
+    type: string
+    default: ""
+  log_level:
+    type: string
+    default: ""
+  space:
+    type: string
+    default: ""
+steps:
+  - run:
+      name: "Deploy release for << parameters.project >> to << parameters.deploy_to >>"
+      command: |
+        get_string_value() {
+          if test "$2"; then
+            PARAMS+=("--$1=$2")
+          fi
+        }
+
+        get_switch_value() {
+          if test $2 = "true"; then
+            PARAMS+=("--$1")
+          fi
+        }
+
+        get_string_value project "<< parameters.project >>"
+        get_string_value releaseNumber "<< parameters.release_number >>"
+        get_string_value channel "<< parameters.channel >>"
+        get_switch_value progress "<< parameters.progress >>"
+        get_switch_value forcepackagedownload "<< parameters.force_package_download >>"
+        get_switch_value waitfordeployment "<< parameters.wait_for_deployment >>"
+        get_string_value deploymenttimeout "<< parameters.deployment_timeout >>"
+        get_switch_value cancelontimeout "<< parameters.cancel_on_timeout >>"
+        get_string_value deploymentchecksleepcycle "<< parameters.deployment_check_sleep_cycle >>"
+        get_string_value guidedfailure "<< parameters.guided_failure >>"
+        get_string_value specificmachines "<< parameters.specific_machines >>"
+        get_string_value exclude_machines "<< parameters.exclude_machines >>"
+        get_switch_value force "<< parameters.force >>"
+        get_string_value skip "<< parameters.skip >>"
+        get_switch_value norawlog "<< parameters.no_raw_log >>"
+        get_string_value rawlogfile "<< parameters.raw_log_file >>"
+        get_string_value variable "<< parameters.variable >>"
+        get_string_value deployat "<< parameters.deploy_at >>"
+        get_string_value nodeployafter "<< parameters.no_deploy_after >>"
+        get_string_value tenant "<< parameters.tenant >>"
+        get_string_value tenanttag "<< parameters.tenant_tag >>"
+        get_string_value deployto "<< parameters.deploy_to >>"
+        get_switch_value updateVariables "<< parameters.update_variables >>"
+        get_string_value server "<< parameters.server >>"
+        get_string_value apiKey "<< parameters.api_key >>"
+        get_string_value user "<< parameters.user >>"
+        get_string_value pass "<< parameters.pass >>"
+        get_string_value configFile "<< parameters.config_file >>"
+        get_string_value timeout "<< parameters.timeout >>"
+        get_string_value proxy "<< parameters.proxy >>"
+        get_string_value proxyUser "<< parameters.proxy_user >>"
+        get_string_value proxyPass "<< parameters.proxy_pass >>"
+        get_string_value logLevel "<< parameters.log_level >>"
+        get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"S
+        get_switch_value debug "<< parameters.debug >>"
+        get_string_value space "<< parameters.space >>"
+
+        echo octo deploy-release "${PARAMS[@]}"
+
+        set -x
+
+        octo deploy-release "${PARAMS[@]}"

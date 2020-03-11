@@ -1,0 +1,25 @@
+parameters:
+  id:
+    type: string
+  format:
+    type: string
+    default: "NuPkg"
+  version:
+    type: string
+    default: ""
+  out_folder:
+    type: string
+    default: "."
+  base_path:
+    type: string
+    default: "."
+  verbose:
+    type: boolean
+    default: false
+  log_level:
+    type: string
+    default: "debug"
+steps:
+  - run:
+      name: "Package << parameters.id >>"
+      command: octo pack --id="<< parameters.id >>" --format="<< parameters.format >>" --version="<< parameters.version >>" --basePath="<< parameters.base_path >>" --outFolder="<< parameters.out_folder >>"
