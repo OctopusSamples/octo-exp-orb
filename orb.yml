@@ -3,52 +3,86 @@ commands:
     parameters:
       api_key:
         default: ""
+        description: |
+          [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
+          username and password. If the guest account is enabled, a key of API-GUEST can be used. This
+          key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
         type: string
       config_file:
         default: ""
+        description: '[Optional] Text file of default values, with one ''key = value''
+          per line.'
         type: string
       debug:
         default: false
+        description: '[Optional] Enable debug logging.'
         type: boolean
-      git_url:
-        default: ""
-        type: string
       ignore_ssl_errors:
         default: false
+        description: |
+          [Optional] Set this flag if your Octopus Server uses HTTPS but the certificate is not trusted on
+          this machine. Any certificate errors will be ignored. WARNING: this option may create a
+          security vulnerability.
         type: boolean
       log_level:
         default: ""
+        description: |
+          [Optional] The log level. Valid options are verbose, debug, information, warning, error and fatal. Defaults to 'debug'.
         type: string
       overwrite_mode:
         default: FailIfExists
+        description: null
         type: string
       package_id:
+        description: |
+          The ID of the package. Specify multiple packages by specifying this argument multiple times:
+          --package-id 'MyCompany.MyApp' --package-id 'MyCompany.MyApp2'.
         type: string
       pass:
         default: ""
+        description: |
+          [Optional] Password to use when authenticating with the server. This Password can also be set
+          in the OCTOPUS_CLI_PASSWORD environment variable.
         type: string
       proxy:
         default: ""
+        description: '[Optional] The URL of the proxy to use, e.g., ''https://proxy.example.com''.'
         type: string
       proxy_pass:
         default: ""
+        description: |
+          [Optional] The password for the proxy. If both the username and password are omitted and
+          proxyAddress is specified, the default credentials are used.
         type: string
       proxy_user:
         default: ""
+        description: '[Optional] The username for the proxy.'
         type: string
       server:
         default: ""
+        description: |
+          [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
+          can also be set in the OCTOPUS_CLI_SERVER environment variable.
         type: string
       space:
         default: ""
+        description: '[Optional] The name or ID of a space within which this command
+          will be executed. The default space will be used if it is omitted.'
         type: string
       timeout:
         default: ""
+        description: '[Optional] Timeout in seconds for network operations. Default
+          is 600.'
         type: string
       user:
         default: ""
+        description: |
+          [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
+          username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
+          variable.
         type: string
       version:
+        description: null
         type: string
     steps:
     - run:
@@ -73,15 +107,7 @@ commands:
             BuildNumber: "$CIRCLE_BUILD_NUM",
             BuildUrl: "$CIRCLE_BUILD_URL",
             Branch: "$CIRCLE_BRANCH",
-            VcsType: "Git",
-            VcsCommitUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
-            Commits: [
-              {
-                Id: "$CIRCLE_SHA1",
-                LinkUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
-                Comment: ""
-              }
-            ]
+            VcsType: "GitHub"
           }
           EOL
 
@@ -109,137 +135,245 @@ commands:
           octo build-information "${PARAMS[@]}"
         name: Push build information for << parameters.package_id >>
   create-release:
+    description: Creates (and, optionally, deploys) a release.
     parameters:
       api_key:
         default: ""
+        description: |
+          [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
+          username and password. If the guest account is enabled, a key of API-GUEST can be used. This
+          key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
         type: string
       cancel_on_timeout:
         default: false
+        description: |
+          [Optional] Whether to cancel the deployment if the deployment timeout is reached (flag, default false).
         type: boolean
       channel:
         default: ""
+        description: |
+          [Optional] Name or ID of the channel to use for the new release. Omit this argument to
+          automatically select the best channel.
         type: string
       config_file:
         default: ""
+        description: '[Optional] Text file of default values, with one ''key = value''
+          per line.'
         type: string
       debug:
         default: false
+        description: '[Optional] Enable debug logging.'
         type: boolean
       deploy_at:
         default: ""
+        description: |
+          [Optional] Time at which deployment should start (scheduled deployment), specified as any valid
+          DateTimeOffset format, and assuming the time zone is the current local time zone.
         type: string
       deploy_to:
         default: ""
+        description: |
+          [Optional] Name or ID of the environment to automatically deploy to, e.g., 'Production' or
+          'Environments-1'; specify this argument multiple times to deploy to multiple environments.
         type: string
       deployment_check_sleep_cycle:
         default: ""
+        description: |
+          [Optional] Specifies how much time (timespan format) should elapse between deployment status checks (default 00:00:10)
         type: string
       deployment_timeout:
         default: ""
+        description: |
+          [Optional] Specifies maximum time (timespan format) that the console session will wait for
+          the deployment to finish(default 00:10:00). This will not stop the deployment. Requires --
+          waitfordeployment parameter set.
         type: string
       exclude_machines:
         default: ""
+        description: |
+          [Optional] A comma-separated list of machine names to exclude in the deployed environment. If
+          not specified all machines in the environment will be considered.
         type: string
       force:
         default: false
+        description: |
+          [Optional] If a project is configured to skip packages with already-installed versions, override this setting to force re-deployment (flag, default false).
         type: boolean
       force_package_download:
         default: false
+        description: |
+          [Optional] Whether to force downloading of already installed packages (flag, default false).
         type: boolean
       guided_failure:
         default: ""
+        description: |
+          [Optional] Whether to use Guided Failure mode. (True or False. If not specified, will use default setting from environment)
         type: string
       ignore_channel_rules:
         default: false
+        description: |
+          [Optional, Flag] Create the release ignoring any version rules specified by the channel.
         type: boolean
       ignore_existing:
         default: false
+        description: |
+          [Optional, Flag] Don't create this release if there is already one with the same version number.
         type: boolean
       ignore_ssl_errors:
         default: false
+        description: |
+          [Optional] Set this flag if your Octopus Server uses HTTPS but the certificate is not trusted on
+          this machine. Any certificate errors will be ignored. WARNING: this option may create a
+          security vulnerability.
         type: boolean
       log_level:
         default: ""
+        description: |
+          [Optional] The log level. Valid options are verbose, debug, information, warning, error and fatal. Defaults to 'debug'.
         type: string
       no_deploy_after:
         default: ""
+        description: |
+          [Optional] Time at which scheduled deployment should expire, specified as any valid
+          DateTimeOffset format, and assuming the time zone is the current local time zone.
         type: string
       no_raw_log:
         default: false
+        description: |
+          [Optional] Don't print the raw log of failed tasks.
         type: boolean
       package:
         default: ""
+        description: |
+          [Optional] Version number to use for a package in the release. Format: StepName:Version or
+          PackageID:Version or StepName:PackageName:Version. StepName, PackageID, and PackageName can be replaced with
+          an asterisk. An asterisk will be assumed for StepName, PackageID, or PackageName if they are omitted.
         type: string
       package_prerelease:
         default: ""
+        description: |
+          [Optional] Pre-release for latest version of all packages to use for this release.
         type: string
       package_version:
         default: ""
+        description: |
+          Default version number of all packages to use for this release.
         type: string
       packages_folder:
         default: ""
+        description: |
+          [Optional] A folder containing packages from which we should get versions.
         type: string
       pass:
         default: ""
+        description: |
+          [Optional] Password to use when authenticating with the server. This Password can also be set
+          in the OCTOPUS_CLI_PASSWORD environment variable.
         type: string
       progress:
         default: false
+        description: |
+          [Optional] Show progress of the deployment.
         type: boolean
       project:
+        description: Name or ID of the project.
         type: string
       proxy:
         default: ""
+        description: '[Optional] The URL of the proxy to use, e.g., ''https://proxy.example.com''.'
         type: string
       proxy_pass:
         default: ""
+        description: |
+          [Optional] The password for the proxy. If both the username and password are omitted and
+          proxyAddress is specified, the default credentials are used.
         type: string
       proxy_user:
         default: ""
+        description: '[Optional] The username for the proxy.'
         type: string
       raw_log_file:
         default: ""
+        description: |
+          [Optional] Redirect the raw log of failed tasks to a file.
         type: string
       release_notes:
         default: ""
+        description: |
+          [Optional] Release Notes for the new release. Styling with Markdown is supported.
         type: string
       release_notes_file:
         default: ""
+        description: |
+          [Optional] Path to a file that contains Release Notes for the new release. Supports Markdown files.
         type: string
       release_number:
         default: ""
+        description: |
+          [Optional] Release number to use for the new release.
         type: string
       server:
         default: ""
+        description: |
+          [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
+          can also be set in the OCTOPUS_CLI_SERVER environment variable.
         type: string
       skip:
         default: ""
+        description: |
+          [Optional] Skip a step by name.
         type: string
       space:
         default: ""
+        description: '[Optional] The name or ID of a space within which this command
+          will be executed. The default space will be used if it is omitted.'
         type: string
       specific_machines:
         default: ""
+        description: |
+          [Optional] A comma-separated list of machine names to target in the deployed environment.
+          If not specified all machines in the environment will be considered.
         type: string
       tenant:
         default: ""
+        description: |
+          Create a deployment for the tenant with this name or ID; specify this argument multiple times
+          to add multiple tenants or use `*` wildcard to deploy to all tenants who are ready for this
+          release (according to lifecycle).
         type: string
       tenant_tag:
         default: ""
+        description: |
+          Create a deployment for tenants matching this tag; specify this argument multiple times to
+          build a query/filter with multiple tags, just like you can in the user interface.
         type: string
       timeout:
         default: ""
+        description: '[Optional] Timeout in seconds for network operations. Default
+          is 600.'
         type: string
       user:
         default: ""
+        description: |
+          [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
+          username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
+          variable.
         type: string
       variable:
         default: ""
+        description: |
+          [Optional] Values for any prompted variables in the format Label:Value. For JSON values,
+          embedded quotation marks should be escaped with a backslash.
         type: string
       wait_for_deployment:
         default: false
+        description: |
+          [Optional] Whether to wait synchronously for deployment to finish.
         type: boolean
       what_if:
         default: false
+        description: |
+          [Optional, Flag] Perform a dry run but don't actually create/deploy release.
         type: boolean
     steps:
     - run:
@@ -308,113 +442,203 @@ commands:
           octo create-release "${PARAMS[@]}"
         name: Create release for << parameters.project >>
   deploy-release:
+    description: Deploys a release.
     parameters:
       api_key:
         default: ""
+        description: |
+          [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
+          username and password. If the guest account is enabled, a key of API-GUEST can be used. This
+          key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
         type: string
       cancel_on_timeout:
         default: false
+        description: |
+          [Optional] Whether to cancel the deployment if the deployment timeout is reached (flag, default false).
         type: boolean
       channel:
         default: ""
+        description: |
+          [Optional] Name or ID of the channel to use when getting the release to deploy.
         type: string
       config_file:
         default: ""
+        description: '[Optional] Text file of default values, with one ''key = value''
+          per line.'
         type: string
       debug:
         default: false
+        description: '[Optional] Enable debug logging.'
         type: boolean
       deploy_at:
         default: ""
+        description: |
+          [Optional] Time at which deployment should start (scheduled deployment), specified as any valid
+          DateTimeOffset format, and assuming the time zone is the current local time zone.
         type: string
       deploy_to:
         default: ""
+        description: |
+          [Optional] Name or ID of the environment to automatically deploy to, e.g., 'Production' or
+          'Environments-1'; specify this argument multiple times to deploy to multiple environments.
         type: string
       deployment_check_sleep_cycle:
         default: ""
+        description: |
+          [Optional] Specifies how much time (timespan format) should elapse between deployment status checks (default 00:00:10)
         type: string
       deployment_timeout:
         default: ""
+        description: |
+          [Optional] Specifies maximum time (timespan format) that the console session will wait for
+          the deployment to finish(default 00:10:00). This will not stop the deployment. Requires --
+          waitfordeployment parameter set.
         type: string
       exclude_machines:
         default: ""
+        description: |
+          [Optional] A comma-separated list of machine names to exclude in the deployed environment. If
+          not specified all machines in the environment will be considered.
         type: string
       force:
         default: false
+        description: |
+          [Optional] If a project is configured to skip packages with already-installed versions, override this setting to force re-deployment (flag, default false).
         type: boolean
       force_package_download:
         default: false
+        description: |
+          [Optional] Whether to force downloading of already installed packages (flag, default false).
         type: boolean
       guided_failure:
         default: ""
+        description: |
+          [Optional] Whether to use Guided Failure mode. (True or False. If not specified, will use default setting from environment)
         type: string
       ignore_ssl_errors:
         default: false
+        description: |
+          [Optional] Set this flag if your Octopus Server uses HTTPS but the certificate is not trusted on
+          this machine. Any certificate errors will be ignored. WARNING: this option may create a
+          security vulnerability.
         type: boolean
       log_level:
         default: ""
+        description: |
+          [Optional] The log level. Valid options are verbose, debug, information, warning, error and fatal. Defaults to 'debug'.
         type: string
       no_deploy_after:
         default: ""
+        description: |
+          [Optional] Time at which scheduled deployment should expire, specified as any valid
+          DateTimeOffset format, and assuming the time zone is the current local time zone.
         type: string
       no_raw_log:
         default: false
+        description: |
+          [Optional] Don't print the raw log of failed tasks.
         type: boolean
       pass:
         default: ""
+        description: |
+          [Optional] Password to use when authenticating with the server. This Password can also be set
+          in the OCTOPUS_CLI_PASSWORD environment variable.
         type: string
       progress:
         default: false
+        description: |
+          [Optional] Show progress of the deployment.
         type: boolean
       project:
+        description: |
+          Name or ID of the project.
         type: string
       proxy:
         default: ""
+        description: '[Optional] The URL of the proxy to use, e.g., ''https://proxy.example.com''.'
         type: string
       proxy_pass:
         default: ""
+        description: |
+          [Optional] The password for the proxy. If both the username and password are omitted and
+          proxyAddress is specified, the default credentials are used.
         type: string
       proxy_user:
         default: ""
+        description: '[Optional] The username for the proxy.'
         type: string
       raw_log_file:
         default: ""
+        description: |
+          [Optional] Redirect the raw log of failed tasks to a file.
         type: string
       release_number:
         default: ""
+        description: |
+          Version number of the release to deploy. Or specify latest for the latest release.
         type: string
       server:
         default: ""
+        description: |
+          [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
+          can also be set in the OCTOPUS_CLI_SERVER environment variable.
         type: string
       skip:
         default: ""
+        description: |
+          [Optional] Skip a step by name.
         type: string
       space:
         default: ""
+        description: '[Optional] The name or ID of a space within which this command
+          will be executed. The default space will be used if it is omitted.'
         type: string
       specific_machines:
         default: ""
+        description: |
+          [Optional] A comma-separated list of machine names to target in the deployed environment.
+          If not specified all machines in the environment will be considered.
         type: string
       tenant:
         default: ""
+        description: |
+          Create a deployment for the tenant with this name or ID; specify this argument multiple times
+          to add multiple tenants or use `*` wildcard to deploy to all tenants who are ready for this
+          release (according to lifecycle).
         type: string
       tenant_tag:
         default: ""
+        description: |
+          Create a deployment for tenants matching this tag; specify this argument multiple times to
+          build a query/filter with multiple tags, just like you can in the user interface.
         type: string
       timeout:
         default: ""
+        description: '[Optional] Timeout in seconds for network operations. Default
+          is 600.'
         type: string
       update_variables:
         default: false
+        description: |
+          Overwrite the variable snapshot for the release by re-importing the variables from the project.
         type: boolean
       user:
         default: ""
+        description: |
+          [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
+          username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
+          variable.
         type: string
       variable:
         default: ""
+        description: |
+          [Optional] Values for any prompted variables in the format Label:Value. For JSON values,
+          embedded quotation marks should be escaped with a backslash.
         type: string
       wait_for_deployment:
         default: false
+        description: |
+          [Optional] Whether to wait synchronously for deployment to finish.
         type: boolean
     steps:
     - run:
@@ -476,6 +700,7 @@ commands:
         name: Deploy release for << parameters.project >> to << parameters.deploy_to
           >>
   install-tools:
+    description: Install octo cli on current image.
     parameters:
       version:
         default: 6.17.0
@@ -488,31 +713,72 @@ commands:
           add-apt-repository "deb https://apt.octopus.com/ stretch main"
           apt update && apt -y install octopuscli
         name: Install octo.exe
-    - run:
-        command: |
-          echo 'export PATH="$PATH:/root/.dotnet/tools"' >> $BASH_ENV
-        name: Update path
   pack:
+    description: Creates a package (.nupkg or .zip) from files on disk, without needing
+      a .nuspec or .csproj.
     parameters:
+      author:
+        default: ""
+        description: '[Optional] Add an author to the NuGet package metadata; defaults
+          to the current user.'
+        type: string
       base_path:
         default: .
+        description: '[Optional] The root folder containing files and folders to pack;
+          defaults to ''.'''
+        type: string
+      compression_level:
+        default: ""
+        description: '[Optional] Set compression level of package: none, fast, optimal
+          (default).'
+        type: string
+      description:
+        default: ""
+        description: '[Optional] A description of the NuGet package; defaults to a
+          generic description.'
         type: string
       format:
-        default: NuPkg
+        default: Zip
+        description: 'Package format. Options are: NuPkg, Zip.'
         type: string
       id:
+        description: The ID of the package; e.g. MyCompany.MyApp
         type: string
       log_level:
         default: debug
+        description: '[Optional] The log level. Valid options are verbose, debug,
+          information, warning, error and fatal. Defaults to ''debug''.'
         type: string
       out_folder:
         default: .
+        description: '[Optional] The folder into which the generated package file
+          will be written; defaults to ''.'''
+        type: string
+      overwrite:
+        default: false
+        description: Allow an existing package file of the same ID/version to be overwritten.
+        type: boolean
+      release_notes:
+        default: ""
+        description: '[Optional] Release notes for this version of the NuGet package.'
+        type: string
+      release_notes_file:
+        default: ""
+        description: '[Optional] A file containing release notes for this version
+          of the package.'
+        type: string
+      title:
+        default: ""
+        description: '[Optional] The title of the NuGet package.'
         type: string
       verbose:
         default: false
+        description: '[Optional] verbose output.'
         type: boolean
       version:
         default: ""
+        description: '[Optional] The version of the package; must be a valid SemVer;
+          defaults to a timestamp-based version.'
         type: string
     steps:
     - run:
@@ -521,108 +787,195 @@ commands:
           >>" --outFolder="<< parameters.out_folder >>"
         name: Package << parameters.id >>
   promote-release:
+    description: Promotes a release.
     parameters:
       api_key:
         default: ""
+        description: |
+          [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
+          username and password. If the guest account is enabled, a key of API-GUEST can be used. This
+          key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
         type: string
       cancel_on_timeout:
         default: false
+        description: |
+          [Optional] Whether to cancel the deployment if the deployment timeout is reached (flag, default false).
         type: boolean
       config_file:
         default: ""
+        description: '[Optional] Text file of default values, with one ''key = value''
+          per line.'
         type: string
       debug:
         default: false
+        description: '[Optional] Enable debug logging.'
         type: boolean
       deploy_at:
         default: ""
+        description: |
+          [Optional] Time at which deployment should start (scheduled deployment), specified as any valid
+          DateTimeOffset format, and assuming the time zone is the current local time zone.
         type: string
       deployment_check_sleep_cycle:
         default: ""
+        description: |
+          [Optional] Specifies how much time (timespan format) should elapse between deployment status checks (default 00:00:10)
         type: string
       deployment_timeout:
         default: ""
+        description: |
+          [Optional] Specifies maximum time (timespan format) that the console session will wait for
+          the deployment to finish(default 00:10:00). This will not stop the deployment. Requires --
+          waitfordeployment parameter set.
         type: string
       exclude_machines:
         default: ""
+        description: |
+          [Optional] A comma-separated list of machine names to exclude in the deployed environment. If
+          not specified all machines in the environment will be considered.
         type: string
       force:
         default: false
+        description: |
+          [Optional] If a project is configured to skip packages with already-installed versions, override this setting to force re-deployment (flag, default false).
         type: boolean
       force_package_download:
         default: false
+        description: |
+          [Optional] Whether to force downloading of already installed packages (flag, default false).
         type: boolean
       from:
+        description: |
+          Name or ID of the environment to get the current deployment from, e.g., 'Staging' or 'Environments-2'.
         type: string
       guided_failure:
         default: ""
+        description: |
+          [Optional] Whether to use Guided Failure mode. (True or False. If not specified, will use default setting from environment)
         type: string
       ignore_ssl_errors:
         default: false
+        description: |
+          [Optional] Set this flag if your Octopus Server uses HTTPS but the certificate is not trusted on
+          this machine. Any certificate errors will be ignored. WARNING: this option may create a
+          security vulnerability.
         type: boolean
       log_level:
         default: ""
+        description: |
+          [Optional] The log level. Valid options are verbose, debug, information, warning, error and fatal. Defaults to 'debug'.
         type: string
       no_deploy_after:
         default: ""
+        description: |
+          [Optional] Time at which scheduled deployment should expire, specified as any valid
+          DateTimeOffset format, and assuming the time zone is the current local time zone.
         type: string
       no_raw_log:
         default: false
+        description: |
+          [Optional] Don't print the raw log of failed tasks.
         type: boolean
       pass:
         default: ""
+        description: |
+          [Optional] Password to use when authenticating with the server. This Password can also be set
+          in the OCTOPUS_CLI_PASSWORD environment variable.
         type: string
       progress:
         default: false
+        description: |
+          [Optional] Show progress of the deployment.
         type: boolean
       project:
+        description: |
+          Name or ID of the project.
         type: string
       proxy:
         default: ""
+        description: '[Optional] The URL of the proxy to use, e.g., ''https://proxy.example.com''.'
         type: string
       proxy_pass:
         default: ""
+        description: |
+          [Optional] The password for the proxy. If both the username and password are omitted and
+          proxyAddress is specified, the default credentials are used.
         type: string
       proxy_user:
         default: ""
+        description: '[Optional] The username for the proxy.'
         type: string
       raw_log_file:
         default: ""
+        description: |
+          [Optional] Redirect the raw log of failed tasks to a file.
         type: string
       server:
         default: ""
+        description: |
+          [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
+          can also be set in the OCTOPUS_CLI_SERVER environment variable.
         type: string
       skip:
         default: ""
+        description: |
+          [Optional] Skip a step by name.
         type: string
       space:
         default: ""
+        description: '[Optional] The name or ID of a space within which this command
+          will be executed. The default space will be used if it is omitted.'
         type: string
       specific_machines:
         default: ""
+        description: |
+          [Optional] A comma-separated list of machine names to target in the deployed environment.
+          If not specified all machines in the environment will be considered.
         type: string
       tenant:
         default: ""
+        description: |
+          Create a deployment for the tenant with this name or ID; specify this argument multiple times
+          to add multiple tenants or use `*` wildcard to deploy to all tenants who are ready for this
+          release (according to lifecycle).
         type: string
       tenant_tag:
         default: ""
+        description: |
+          Create a deployment for tenants matching this tag; specify this argument multiple times to
+          build a query/filter with multiple tags, just like you can in the user interface.
         type: string
       timeout:
         default: ""
+        description: '[Optional] Timeout in seconds for network operations. Default
+          is 600.'
         type: string
       to:
+        description: |
+          Name or ID of the environment to deploy to, e.g, 'Production' or 'Environments-1'.
         type: string
       update_variables:
         default: false
+        description: |
+          Overwrite the variable snapshot for the release by re-importing the variables from the project.
         type: boolean
       user:
         default: ""
+        description: |
+          [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
+          username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
+          variable.
         type: string
       variable:
         default: ""
+        description: |
+          [Optional] Values for any prompted variables in the format Label:Value. For JSON values,
+          embedded quotation marks should be escaped with a backslash.
         type: string
       wait_for_deployment:
         default: false
+        description: |
+          [Optional] Whether to wait synchronously for deployment to finish.
         type: boolean
     steps:
     - run:
@@ -679,53 +1032,94 @@ commands:
         name: Promote release of << parameters.project >> from << parameters.from
           >> to << parameters.to >>
   push:
+    description: Pushes a package (.nupkg, .zip, .tar.gz, etc.) package to the built-in
+      NuGet repository in an Octopus Server.
     parameters:
       api_key:
         default: ""
+        description: |
+          [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
+          username and password. If the guest account is enabled, a key of API-GUEST can be used. This
+          key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
         type: string
       config_file:
         default: ""
+        description: '[Optional] Text file of default values, with one ''key = value''
+          per line.'
         type: string
       debug:
         default: false
+        description: '[Optional] Enable debug logging.'
         type: boolean
       ignore_ssl_errors:
         default: false
+        description: |
+          [Optional] Set this flag if your Octopus Server uses HTTPS but the certificate is not trusted on
+          this machine. Any certificate errors will be ignored. WARNING: this option may create a
+          security vulnerability.
         type: boolean
       log_level:
         default: ""
+        description: |
+          [Optional] The log level. Valid options are verbose, debug, information, warning, error and fatal. Defaults to 'debug'.
         type: string
       overwrite_mode:
         default: FailIfExists
+        description: |
+          If the package already exists in the repository, the default behavior is to reject the new
+          package being pushed (FailIfExists). You can use the overwrite mode to OverwriteExisting or IgnoreIfExists.
         type: string
       package:
+        description: Package file to push.
         type: string
       pass:
         default: ""
+        description: |
+          [Optional] Password to use when authenticating with the server. This Password can also be set
+          in the OCTOPUS_CLI_PASSWORD environment variable.
         type: string
       proxy:
         default: ""
+        description: '[Optional] The URL of the proxy to use, e.g., ''https://proxy.example.com''.'
         type: string
       proxy_pass:
         default: ""
+        description: |
+          [Optional] The password for the proxy. If both the username and password are omitted and
+          proxyAddress is specified, the default credentials are used.
         type: string
       proxy_user:
         default: ""
+        description: '[Optional] The username for the proxy.'
         type: string
       server:
         default: ""
+        description: |
+          [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
+          can also be set in the OCTOPUS_CLI_SERVER environment variable.
         type: string
       space:
         default: ""
+        description: '[Optional] The name or ID of a space within which this command
+          will be executed. The default space will be used if it is omitted.'
         type: string
       timeout:
         default: ""
+        description: '[Optional] Timeout in seconds for network operations. Default
+          is 600.'
         type: string
       use_delta_compression:
         default: true
+        description: |
+          Allows disabling of delta compression when uploading packages to the Octopus Server. (True
+          or False. Defaults to true.)
         type: boolean
       user:
         default: ""
+        description: |
+          [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
+          username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
+          variable.
         type: string
     steps:
     - run:
@@ -764,7 +1158,7 @@ commands:
 description: |
   Octopus Orb
 display:
-  home_url: https://github.com/ryanrousseau/octo-orb
-  source_url: https://github.com/ryanrousseau/octo-orb
+  home_url: https://github.com/OctopusSamples/octo-exp-orb
+  source_url: https://github.com/OctopusSamples/octo-exp-orb
 version: 2.1
 

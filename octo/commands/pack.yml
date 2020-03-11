@@ -1,24 +1,60 @@
+description: Creates a package (.nupkg or .zip) from files on disk, without needing a .nuspec or .csproj.
 parameters:
   id:
     type: string
+    description: The ID of the package; e.g. MyCompany.MyApp
   format:
     type: string
-    default: "NuPkg"
+    description: "Package format. Options are: NuPkg, Zip."
+    default: "Zip"
   version:
     type: string
+    description: "[Optional] The version of the package; must be a valid SemVer; defaults to a timestamp-based version."
     default: ""
   out_folder:
     type: string
+    description: "[Optional] The folder into which the generated package file will be written; defaults to '.'"
     default: "."
   base_path:
     type: string
+    description: "[Optional] The root folder containing files and folders to pack; defaults to '.'"
     default: "."
   verbose:
     type: boolean
+    description: "[Optional] verbose output."
     default: false
   log_level:
     type: string
+    description: "[Optional] The log level. Valid options are verbose, debug, information, warning, error and fatal. Defaults to 'debug'."
     default: "debug"
+  author:
+    type: string
+    description: "[Optional] Add an author to the NuGet package metadata; defaults to the current user."
+    default: ""
+  title:
+    type: string
+    description: "[Optional] The title of the NuGet package."
+    default: ""
+  description:
+    type: string
+    description: "[Optional] A description of the NuGet package; defaults to a generic description."
+    default: ""
+  release_notes:
+    type: string
+    description: "[Optional] Release notes for this version of the NuGet package."
+    default: ""
+  release_notes_file:
+    type: string
+    description: "[Optional] A file containing release notes for this version of the package."
+    default: ""
+  compression_level:
+    type: string
+    description: "[Optional] Set compression level of package: none, fast, optimal (default)."
+    default: ""
+  overwrite:
+    type: boolean
+    description: Allow an existing package file of the same ID/version to be overwritten.
+    default: false
 steps:
   - run:
       name: "Package << parameters.id >>"

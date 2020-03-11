@@ -1,51 +1,82 @@
 parameters:
   package_id:
+    description: |
+      The ID of the package. Specify multiple packages by specifying this argument multiple times:
+      --package-id 'MyCompany.MyApp' --package-id 'MyCompany.MyApp2'.
     type: string
   version:
+    description:
     type: string
   overwrite_mode:
+    description:
     type: string
     default: "FailIfExists"
-  git_url:
-    type: string
-    default: ""
   space:
     type: string
+    description: "[Optional] The name or ID of a space within which this command will be executed. The default space will be used if it is omitted."
     default: ""
   server:
     type: string
+    description: |
+      [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
+      can also be set in the OCTOPUS_CLI_SERVER environment variable.
     default: ""
   api_key:
     type: string
+    description: |
+      [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
+      username and password. If the guest account is enabled, a key of API-GUEST can be used. This
+      key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
     default: ""
   user:
     type: string
+    description: |
+      [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
+      username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
+      variable.
     default: ""
   pass:
     type: string
+    description: |
+      [Optional] Password to use when authenticating with the server. This Password can also be set
+      in the OCTOPUS_CLI_PASSWORD environment variable.
     default: ""
   config_file:
     type: string
+    description: "[Optional] Text file of default values, with one 'key = value' per line."
     default: ""
   debug:
     type: boolean
+    description: "[Optional] Enable debug logging."
     default: false
   ignore_ssl_errors:
     type: boolean
+    description: |
+      [Optional] Set this flag if your Octopus Server uses HTTPS but the certificate is not trusted on
+      this machine. Any certificate errors will be ignored. WARNING: this option may create a
+      security vulnerability.
     default: false
   timeout:
+    description: "[Optional] Timeout in seconds for network operations. Default is 600."
     type: string
     default: ""
   proxy:
     type: string
+    description: "[Optional] The URL of the proxy to use, e.g., 'https://proxy.example.com'."
     default: ""
   proxy_user:
+    description: "[Optional] The username for the proxy."
     type: string
     default: ""
   proxy_pass:
+    description: |
+      [Optional] The password for the proxy. If both the username and password are omitted and
+      proxyAddress is specified, the default credentials are used.
     type: string
     default: ""
   log_level:
+    description: |
+      [Optional] The log level. Valid options are verbose, debug, information, warning, error and fatal. Defaults to 'debug'.
     type: string
     default: ""
 steps:
@@ -72,15 +103,7 @@ steps:
           BuildNumber: "$CIRCLE_BUILD_NUM",
           BuildUrl: "$CIRCLE_BUILD_URL",
           Branch: "$CIRCLE_BRANCH",
-          VcsType: "Git",
-          VcsCommitUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
-          Commits: [
-            {
-              Id: "$CIRCLE_SHA1",
-              LinkUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
-              Comment: ""
-            }
-          ]
+          VcsType: "GitHub"
         }
         EOL
 

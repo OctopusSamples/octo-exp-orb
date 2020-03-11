@@ -1,3 +1,4 @@
+description: Install octo cli on current image.
 parameters:
   version:
     type: string
@@ -10,7 +11,3 @@ steps:
         apt-key adv --fetch-keys https://apt.octopus.com/public.key
         add-apt-repository "deb https://apt.octopus.com/ stretch main"
         apt update && apt -y install octopuscli
-  - run:
-      name: "Update path"
-      command: |
-        echo 'export PATH="$PATH:/root/.dotnet/tools"' >> $BASH_ENV
