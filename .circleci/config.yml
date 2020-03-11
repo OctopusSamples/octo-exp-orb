@@ -23,20 +23,4 @@ jobs:
 workflows:
   build:
     jobs:
-      - create-dev-folder
-      - orb-tools/lint:
-          checkout: false
-          attach-workspace: true
-          workspace-root: dev
-          lint-dir: dev
-          requires:
-            - create-dev-folder
-      - orb-tools/pack:
-          attach-workspace: true
-          workspace-root: dev
-          workspace-path: orb.yml
-          source-dir: ./octo
-          destination-orb-path: /dev/orb.yml
-          artifact-path: dev
-          requires:
-            - orb-tools/lint
+      - orb-tools/lint

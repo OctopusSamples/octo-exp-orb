@@ -1,0 +1,770 @@
+commands:
+  build-information:
+    parameters:
+      api_key:
+        default: ""
+        type: string
+      config_file:
+        default: ""
+        type: string
+      debug:
+        default: false
+        type: boolean
+      git_url:
+        default: ""
+        type: string
+      ignore_ssl_errors:
+        default: false
+        type: boolean
+      log_level:
+        default: ""
+        type: string
+      overwrite_mode:
+        default: FailIfExists
+        type: string
+      package_id:
+        type: string
+      pass:
+        default: ""
+        type: string
+      proxy:
+        default: ""
+        type: string
+      proxy_pass:
+        default: ""
+        type: string
+      proxy_user:
+        default: ""
+        type: string
+      server:
+        default: ""
+        type: string
+      space:
+        default: ""
+        type: string
+      timeout:
+        default: ""
+        type: string
+      user:
+        default: ""
+        type: string
+      version:
+        type: string
+    steps:
+    - run:
+        command: |
+          apt -y install git curl jq
+
+          get_string_value() {
+            if test "$2"; then
+              PARAMS+=("--$1=$2")
+            fi
+          }
+
+          get_switch_value() {
+            if test $2 = "true"; then
+              PARAMS+=("--$1")
+            fi
+          }
+
+          cat >> << parameters.package_id >>.json \<<EOL
+          {
+            BuildEnvironment: "CircleCI",
+            BuildNumber: "$CIRCLE_BUILD_NUM",
+            BuildUrl: "$CIRCLE_BUILD_URL",
+            Branch: "$CIRCLE_BRANCH",
+            VcsType: "Git",
+            VcsCommitUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
+            Commits: [
+              {
+                Id: "$CIRCLE_SHA1",
+                LinkUrl: "<< parameters.git_url >>/commits/${CIRCLE_SHA1}",
+                Comment: ""
+              }
+            ]
+          }
+          EOL
+
+          cat << parameters.package_id >>.json
+
+          PARAMS=("--file=<< parameters.package_id >>.json")
+
+          get_string_value server "<< parameters.server >>"
+          get_string_value apiKey "<< parameters.api_key >>"
+          get_string_value space "<< parameters.space >>"
+          get_string_value package-id "<< parameters.package_id >>"
+          get_string_value version "<< parameters.version >>"
+          get_string_value overwrite-mode "<< parameters.overwrite_mode >>"
+          get_string_value user "<< parameters.user >>"
+          get_string_value pass "<< parameters.pass >>"
+          get_string_value configFile "<< parameters.config_file >>"
+          get_string_value timeout "<< parameters.timeout >>"
+          get_string_value proxy "<< parameters.proxy >>"
+          get_string_value proxyUser "<< parameters.proxy_user >>"
+          get_string_value proxyPass "<< parameters.proxy_pass >>"
+          get_string_value logLevel "<< parameters.log_level >>"
+          get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"
+          get_switch_value debug "<< parameters.debug >>"
+
+          octo build-information "${PARAMS[@]}"
+        name: Push build information for << parameters.package_id >>
+  create-release:
+    parameters:
+      api_key:
+        default: ""
+        type: string
+      cancel_on_timeout:
+        default: false
+        type: boolean
+      channel:
+        default: ""
+        type: string
+      config_file:
+        default: ""
+        type: string
+      debug:
+        default: false
+        type: boolean
+      deploy_at:
+        default: ""
+        type: string
+      deploy_to:
+        default: ""
+        type: string
+      deployment_check_sleep_cycle:
+        default: ""
+        type: string
+      deployment_timeout:
+        default: ""
+        type: string
+      exclude_machines:
+        default: ""
+        type: string
+      force:
+        default: false
+        type: boolean
+      force_package_download:
+        default: false
+        type: boolean
+      guided_failure:
+        default: ""
+        type: string
+      ignore_channel_rules:
+        default: false
+        type: boolean
+      ignore_existing:
+        default: false
+        type: boolean
+      ignore_ssl_errors:
+        default: false
+        type: boolean
+      log_level:
+        default: ""
+        type: string
+      no_deploy_after:
+        default: ""
+        type: string
+      no_raw_log:
+        default: false
+        type: boolean
+      package:
+        default: ""
+        type: string
+      package_prerelease:
+        default: ""
+        type: string
+      package_version:
+        default: ""
+        type: string
+      packages_folder:
+        default: ""
+        type: string
+      pass:
+        default: ""
+        type: string
+      progress:
+        default: false
+        type: boolean
+      project:
+        type: string
+      proxy:
+        default: ""
+        type: string
+      proxy_pass:
+        default: ""
+        type: string
+      proxy_user:
+        default: ""
+        type: string
+      raw_log_file:
+        default: ""
+        type: string
+      release_notes:
+        default: ""
+        type: string
+      release_notes_file:
+        default: ""
+        type: string
+      release_number:
+        default: ""
+        type: string
+      server:
+        default: ""
+        type: string
+      skip:
+        default: ""
+        type: string
+      space:
+        default: ""
+        type: string
+      specific_machines:
+        default: ""
+        type: string
+      tenant:
+        default: ""
+        type: string
+      tenant_tag:
+        default: ""
+        type: string
+      timeout:
+        default: ""
+        type: string
+      user:
+        default: ""
+        type: string
+      variable:
+        default: ""
+        type: string
+      wait_for_deployment:
+        default: false
+        type: boolean
+      what_if:
+        default: false
+        type: boolean
+    steps:
+    - run:
+        command: |
+          get_string_value() {
+            if test "$2"; then
+              PARAMS+=("--$1=$2")
+            fi
+          }
+
+          get_switch_value() {
+            if test $2 = "true"; then
+              PARAMS+=("--$1")
+            fi
+          }
+
+          get_string_value server "<< parameters.server >>"
+          get_string_value apiKey "<< parameters.api_key >>"
+          get_string_value project "<< parameters.project >>"
+          get_string_value packageversion "<< parameters.package_version >>"
+          get_string_value releaseNumber "<< parameters.release_number >>"
+          get_string_value channel "<< parameters.channel >>"
+          get_string_value package "<< parameters.package >>"
+          get_string_value packagesFolder "<< parameters.packages_folder >>"
+          get_string_value releasenotes "<< parameters.release_notes >>"
+          get_string_value releasenotesfile "<< parameters.release_notes_file >>"
+          get_switch_value ignoreexisting "<< parameters.ignore_existing >>"
+          get_switch_value ignorechannelrules "<< parameters.ignore_channel_rules >>"
+          get_string_value packageprerelease "<< parameters.package_prerelease >>"
+          get_switch_value whatif "<< parameters.what_if >>"
+          get_switch_value progress "<< parameters.progress >>"
+          get_switch_value forcepackagedownload "<< parameters.force_package_download >>"
+          get_switch_value waitfordeployment "<< parameters.wait_for_deployment >>"
+          get_string_value deploymenttimeout "<< parameters.deployment_timeout >>"
+          get_switch_value cancelontimeout "<< parameters.cancel_on_timeout >>"
+          get_string_value deploymentchecksleepcycle "<< parameters.deployment_check_sleep_cycle >>"
+          get_string_value guidedfailure "<< parameters.guided_failure >>"
+          get_string_value specificmachines "<< parameters.specific_machines >>"
+          get_string_value excludemachines "<< parameters.exclude_machines >>"
+          get_switch_value force "<< parameters.force >>"
+          get_string_value skip "<< parameters.skip >>"
+          get_switch_value norawlog "<< parameters.no_raw_log >>"
+          get_string_value rawlogfile "<< parameters.raw_log_file >>"
+          get_string_value variable "<< parameters.variable >>"
+          get_string_value deployat "<< parameters.deploy_at >>"
+          get_string_value nodeployafter "<< parameters.no_deploy_after >>"
+          get_string_value tenant "<< parameters.tenant >>"
+          get_string_value tenanttag "<< parameters.tenant_tag >>"
+          get_string_value deployto "<< parameters.deploy_to >>"
+          get_string_value user "<< parameters.user >>"
+          get_string_value pass "<< parameters.pass >>"
+          get_string_value configFile "<< parameters.config_file >>"
+          get_string_value timeout "<< parameters.timeout >>"
+          get_string_value proxy "<< parameters.proxy >>"
+          get_string_value proxyUser "<< parameters.proxy_user >>"S
+          get_string_value proxyPass "<< parameters.proxy_pass >>"
+          get_string_value logLevel "<< parameters.log_level >>"
+          get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"
+          get_switch_value debug "<< parameters.debug >>"
+          get_string_value space "<< parameters.space >>"
+
+          echo octo create-release "${PARAMS[@]}"
+
+          set -x
+
+          octo create-release "${PARAMS[@]}"
+        name: Create release for << parameters.project >>
+  deploy-release:
+    parameters:
+      api_key:
+        default: ""
+        type: string
+      cancel_on_timeout:
+        default: false
+        type: boolean
+      channel:
+        default: ""
+        type: string
+      config_file:
+        default: ""
+        type: string
+      debug:
+        default: false
+        type: boolean
+      deploy_at:
+        default: ""
+        type: string
+      deploy_to:
+        default: ""
+        type: string
+      deployment_check_sleep_cycle:
+        default: ""
+        type: string
+      deployment_timeout:
+        default: ""
+        type: string
+      exclude_machines:
+        default: ""
+        type: string
+      force:
+        default: false
+        type: boolean
+      force_package_download:
+        default: false
+        type: boolean
+      guided_failure:
+        default: ""
+        type: string
+      ignore_ssl_errors:
+        default: false
+        type: boolean
+      log_level:
+        default: ""
+        type: string
+      no_deploy_after:
+        default: ""
+        type: string
+      no_raw_log:
+        default: false
+        type: boolean
+      pass:
+        default: ""
+        type: string
+      progress:
+        default: false
+        type: boolean
+      project:
+        type: string
+      proxy:
+        default: ""
+        type: string
+      proxy_pass:
+        default: ""
+        type: string
+      proxy_user:
+        default: ""
+        type: string
+      raw_log_file:
+        default: ""
+        type: string
+      release_number:
+        default: ""
+        type: string
+      server:
+        default: ""
+        type: string
+      skip:
+        default: ""
+        type: string
+      space:
+        default: ""
+        type: string
+      specific_machines:
+        default: ""
+        type: string
+      tenant:
+        default: ""
+        type: string
+      tenant_tag:
+        default: ""
+        type: string
+      timeout:
+        default: ""
+        type: string
+      update_variables:
+        default: false
+        type: boolean
+      user:
+        default: ""
+        type: string
+      variable:
+        default: ""
+        type: string
+      wait_for_deployment:
+        default: false
+        type: boolean
+    steps:
+    - run:
+        command: |
+          get_string_value() {
+            if test "$2"; then
+              PARAMS+=("--$1=$2")
+            fi
+          }
+
+          get_switch_value() {
+            if test $2 = "true"; then
+              PARAMS+=("--$1")
+            fi
+          }
+
+          get_string_value project "<< parameters.project >>"
+          get_string_value releaseNumber "<< parameters.release_number >>"
+          get_string_value channel "<< parameters.channel >>"
+          get_switch_value progress "<< parameters.progress >>"
+          get_switch_value forcepackagedownload "<< parameters.force_package_download >>"
+          get_switch_value waitfordeployment "<< parameters.wait_for_deployment >>"
+          get_string_value deploymenttimeout "<< parameters.deployment_timeout >>"
+          get_switch_value cancelontimeout "<< parameters.cancel_on_timeout >>"
+          get_string_value deploymentchecksleepcycle "<< parameters.deployment_check_sleep_cycle >>"
+          get_string_value guidedfailure "<< parameters.guided_failure >>"
+          get_string_value specificmachines "<< parameters.specific_machines >>"
+          get_string_value exclude_machines "<< parameters.exclude_machines >>"
+          get_switch_value force "<< parameters.force >>"
+          get_string_value skip "<< parameters.skip >>"
+          get_switch_value norawlog "<< parameters.no_raw_log >>"
+          get_string_value rawlogfile "<< parameters.raw_log_file >>"
+          get_string_value variable "<< parameters.variable >>"
+          get_string_value deployat "<< parameters.deploy_at >>"
+          get_string_value nodeployafter "<< parameters.no_deploy_after >>"
+          get_string_value tenant "<< parameters.tenant >>"
+          get_string_value tenanttag "<< parameters.tenant_tag >>"
+          get_string_value deployto "<< parameters.deploy_to >>"
+          get_switch_value updateVariables "<< parameters.update_variables >>"
+          get_string_value server "<< parameters.server >>"
+          get_string_value apiKey "<< parameters.api_key >>"
+          get_string_value user "<< parameters.user >>"
+          get_string_value pass "<< parameters.pass >>"
+          get_string_value configFile "<< parameters.config_file >>"
+          get_string_value timeout "<< parameters.timeout >>"
+          get_string_value proxy "<< parameters.proxy >>"
+          get_string_value proxyUser "<< parameters.proxy_user >>"
+          get_string_value proxyPass "<< parameters.proxy_pass >>"
+          get_string_value logLevel "<< parameters.log_level >>"
+          get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"S
+          get_switch_value debug "<< parameters.debug >>"
+          get_string_value space "<< parameters.space >>"
+
+          echo octo deploy-release "${PARAMS[@]}"
+
+          set -x
+
+          octo deploy-release "${PARAMS[@]}"
+        name: Deploy release for << parameters.project >> to << parameters.deploy_to
+          >>
+  install-tools:
+    parameters:
+      version:
+        default: 6.17.0
+        type: string
+    steps:
+    - run:
+        command: |
+          apt update && apt -y install --no-install-recommends software-properties-common gnupg apt-transport-https
+          apt-key adv --fetch-keys https://apt.octopus.com/public.key
+          add-apt-repository "deb https://apt.octopus.com/ stretch main"
+          apt update && apt -y install octopuscli
+        name: Install octo.exe
+    - run:
+        command: |
+          echo 'export PATH="$PATH:/root/.dotnet/tools"' >> $BASH_ENV
+        name: Update path
+  pack:
+    parameters:
+      base_path:
+        default: .
+        type: string
+      format:
+        default: NuPkg
+        type: string
+      id:
+        type: string
+      log_level:
+        default: debug
+        type: string
+      out_folder:
+        default: .
+        type: string
+      verbose:
+        default: false
+        type: boolean
+      version:
+        default: ""
+        type: string
+    steps:
+    - run:
+        command: octo pack --id="<< parameters.id >>" --format="<< parameters.format
+          >>" --version="<< parameters.version >>" --basePath="<< parameters.base_path
+          >>" --outFolder="<< parameters.out_folder >>"
+        name: Package << parameters.id >>
+  promote-release:
+    parameters:
+      api_key:
+        default: ""
+        type: string
+      cancel_on_timeout:
+        default: false
+        type: boolean
+      config_file:
+        default: ""
+        type: string
+      debug:
+        default: false
+        type: boolean
+      deploy_at:
+        default: ""
+        type: string
+      deployment_check_sleep_cycle:
+        default: ""
+        type: string
+      deployment_timeout:
+        default: ""
+        type: string
+      exclude_machines:
+        default: ""
+        type: string
+      force:
+        default: false
+        type: boolean
+      force_package_download:
+        default: false
+        type: boolean
+      from:
+        type: string
+      guided_failure:
+        default: ""
+        type: string
+      ignore_ssl_errors:
+        default: false
+        type: boolean
+      log_level:
+        default: ""
+        type: string
+      no_deploy_after:
+        default: ""
+        type: string
+      no_raw_log:
+        default: false
+        type: boolean
+      pass:
+        default: ""
+        type: string
+      progress:
+        default: false
+        type: boolean
+      project:
+        type: string
+      proxy:
+        default: ""
+        type: string
+      proxy_pass:
+        default: ""
+        type: string
+      proxy_user:
+        default: ""
+        type: string
+      raw_log_file:
+        default: ""
+        type: string
+      server:
+        default: ""
+        type: string
+      skip:
+        default: ""
+        type: string
+      space:
+        default: ""
+        type: string
+      specific_machines:
+        default: ""
+        type: string
+      tenant:
+        default: ""
+        type: string
+      tenant_tag:
+        default: ""
+        type: string
+      timeout:
+        default: ""
+        type: string
+      to:
+        type: string
+      update_variables:
+        default: false
+        type: boolean
+      user:
+        default: ""
+        type: string
+      variable:
+        default: ""
+        type: string
+      wait_for_deployment:
+        default: false
+        type: boolean
+    steps:
+    - run:
+        command: |
+          get_string_value() {
+            if test "$2"; then
+              PARAMS+=("--$1=\"$2\"")
+            fi
+          }
+
+          get_switch_value() {
+            if test $2 = "true"; then
+              PARAMS+=("--$1")
+            fi
+          }
+
+          get_string_value project "<< parameters.project >>"
+          get_string_value from "<< parameters.from >>"
+          get_string_value to "<< parameters.to >>"
+          get_switch_value updateVariables << parameters.update_variables >>"
+          get_switch_value progress "<< parameters.progress >>"
+          get_switch_value forcepackagedownload "<< parameters.force_package_download >>"
+          get_switch_value waitfordeployment "<< parameters.wait_for_deployment >>"
+          get_string_value deploymenttimeout "<< parameters.deployment_timeout >>"
+          get_switch_value cancelontimeout "<< parameters.cancel_on_timeout >>"
+          get_string_value deploymentchecksleepcycle "<< parameters.deployment_check_sleep_cycle >>"
+          get_string_value guidedfailure "<< parameters.guided_failure >>"
+          get_string_value specificmachines "<< parameters.specific_machines >>"
+          get_string_value excludemachines "<< parameters.exclude_machines >>"
+          get_switch_value force "<< parameters.force >>"
+          get_string_value skip "<< parameters.skip >>"
+          get_switch_value norawlog "<< parameters.no_raw_log >>"
+          get_string_value rawlogfile "<< parameters.raw_log_file >>"
+          get_string_value variable "<< parameters.variable >>"
+          get_string_value deployat "<< parameters.deploy_at >>"
+          get_string_value nodeployafter "<< parameters.no_deploy_after >>"
+          get_string_value tenant "<< parameters.tenant >>"
+          get_string_value tenanttag "<< parameters.tenant_tag >>"
+          get_string_value server "<< parameters.server >>"
+          get_string_value apiKey "<< parameters.api_key >>"
+          get_string_value user "<< parameters.user >>"
+          get_string_value pass "<< parameters.pass >>"
+          get_string_value configFile "<< parameters.config_file >>"
+          get_string_value timeout "<< parameters.timeout >>"
+          get_string_value proxy "<< parameters.proxy >>"
+          get_string_value proxyUser "<< parameters.proxy_user >>"
+          get_string_value proxyPass "<< parameters.proxy_pass >>"
+          get_string_value logLevel "<< parameters.log_level >>"
+          get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"
+          get_switch_value debug "<< parameters.debug >>"
+          get_string_value space "<< parameters.space >>"
+
+          octo promote-release "${PARAMS[@]}"
+        name: Promote release of << parameters.project >> from << parameters.from
+          >> to << parameters.to >>
+  push:
+    parameters:
+      api_key:
+        default: ""
+        type: string
+      config_file:
+        default: ""
+        type: string
+      debug:
+        default: false
+        type: boolean
+      ignore_ssl_errors:
+        default: false
+        type: boolean
+      log_level:
+        default: ""
+        type: string
+      overwrite_mode:
+        default: FailIfExists
+        type: string
+      package:
+        type: string
+      pass:
+        default: ""
+        type: string
+      proxy:
+        default: ""
+        type: string
+      proxy_pass:
+        default: ""
+        type: string
+      proxy_user:
+        default: ""
+        type: string
+      server:
+        default: ""
+        type: string
+      space:
+        default: ""
+        type: string
+      timeout:
+        default: ""
+        type: string
+      use_delta_compression:
+        default: true
+        type: boolean
+      user:
+        default: ""
+        type: string
+    steps:
+    - run:
+        command: |
+          get_string_value() {
+            if test "$2"; then
+              PARAMS+=("--$1=$2")
+            fi
+          }
+
+          get_switch_value() {
+            if test $2 = "true"; then
+              PARAMS+=("--$1")
+            fi
+          }
+
+          get_string_value server "<< parameters.server >>"
+          get_string_value apiKey "<< parameters.api_key >>"
+          get_string_value space "<< parameters.space >>"
+          get_string_value package "<< parameters.package >>"
+          get_string_value overwrite-mode "<< parameters.overwrite_mode >>"
+          get_string_value use-delta-compression "<< parameters.use_delta_compression >>"
+          get_string_value user "<< parameters.user >>"
+          get_string_value pass "<< parameters.pass >>"
+          get_string_value configFile "<< parameters.config_file >>"
+          get_string_value timeout "<< parameters.timeout >>"
+          get_string_value proxy "<< parameters.proxy >>"
+          get_string_value proxyUser "<< parameters.proxy_user >>"
+          get_string_value proxyPass "<< parameters.proxy_pass >>"
+          get_string_value logLevel "<< parameters.log_level >>"
+          get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"
+          get_switch_value debug "<< parameters.debug >>"
+
+          octo push "${PARAMS[@]}"
+        name: Push << parameters.package >>
+description: |
+  Octopus Orb
+display:
+  home_url: https://github.com/ryanrousseau/octo-orb
+  source_url: https://github.com/ryanrousseau/octo-orb
+version: 2.1
+
