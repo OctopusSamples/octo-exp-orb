@@ -3,14 +3,13 @@ version: 2.1
 orbs:
   orb-tools: circleci/orb-tools@8.14.0
 
-workflows:
-  # build runs on checkins
-  build:
-    jobs:
-      package:
-        docker:
-          - image: ubuntu:18.04
-        steps:
+jobs:
+  create-dev-folder:
+    docker:
+      - image: ubuntu:18.04
+    steps:
+      - checkout
+      - run:
           name: Create dev folder
           command: |
             mkdir dev
@@ -19,7 +18,18 @@ workflows:
           root: dev
           paths:
             - orb.yml
-      - orb-tools/lint
+
+workflows:
+  build:
+    jobs:
+      - create-dev-folder
+      - orb-tools/lint:
+          checkout: false
+          attach-workspace: true
+          workspace-root: dev
+          lint-dir: dev
+          requires:
+            - create-dev-folder
       - orb-tools/pack:
           attach-workspace: true
           workspace-root: dev
