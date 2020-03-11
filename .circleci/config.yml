@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Create dev folder
           command: |
+            apt-get update && apt-get install -y ca-certificates
             mkdir dev
             touch ./dev/orb.yml
       - persist_to_workspace:
