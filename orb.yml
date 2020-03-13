@@ -712,7 +712,7 @@ commands:
           apt-key adv --fetch-keys https://apt.octopus.com/public.key
           add-apt-repository "deb https://apt.octopus.com/ stretch main"
           apt update && apt -y install octopuscli
-        name: Install octo.exe
+        name: Install Octo CLI
   pack:
     description: Creates a package (.nupkg or .zip) from files on disk, without needing
       a .nuspec or .csproj.
