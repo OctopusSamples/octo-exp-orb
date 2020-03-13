@@ -744,6 +744,11 @@ commands:
       id:
         description: The ID of the package; e.g. MyCompany.MyApp
         type: string
+      include:
+        default: ""
+        description: |
+          [Optional] Add a file pattern to include, relative to the base path e.g. /bin/*.dll - if none are specified, defaults to **
+        type: string
       log_level:
         default: debug
         description: '[Optional] The log level. Valid options are verbose, debug,
@@ -782,9 +787,36 @@ commands:
         type: string
     steps:
     - run:
-        command: octo pack --id="<< parameters.id >>" --format="<< parameters.format
-          >>" --version="<< parameters.version >>" --basePath="<< parameters.base_path
-          >>" --outFolder="<< parameters.out_folder >>"
+        command: |
+          get_string_value() {
+            if test "$2"; then
+              PARAMS+=("--$1=$2")
+            fi
+          }
+
+          get_switch_value() {
+            if test $2 = "true"; then
+              PARAMS+=("--$1")
+            fi
+          }
+
+          get_string_value id "<< parameters.id >>"
+          get_string_value format "<< parameters.format >>"
+          get_string_value version "<< parameters.version >>"
+          get_string_value outFolder "<< parameters.out_folder >>"
+          get_string_value basePath "<< parameters.base_path >>"
+          get_switch_value verbose "<< parameters.verbose >>"
+          get_string_value logLevel "<< parameters.log_level >>"
+          get_string_value author "<< parameters.author >>"
+          get_string_value title "<< parameters.title >>"
+          get_string_value description "<< parameters.description >>"
+          get_string_value releaseNotes "<< parameters.release_notes >>"
+          get_string_value releaseNotesFile "<< parameters.release_notes_file >>"
+          get_string_value compressionlevel "<< parameters.compression_level >>"
+          get_string_value include "<< parameters.include >>"
+          get_switch_value overwrite "<< parameters.overwrite >>"
+
+          octo pack "${PARAMS[@]}"
         name: Package << parameters.id >>
   promote-release:
     description: Promotes a release.
