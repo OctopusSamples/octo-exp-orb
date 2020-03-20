@@ -66,8 +66,8 @@ examples:
             - checkout
             - octo-exp/push:
                 package: "package/OctopusSamples.OctoPetShop.Database.1.2.3.zip"
-                server: "https://youroctopusserver.com"
-                api_key: "API-YOURAPIKEY"
+                server: "OCTOPUS_SERVER_URL"
+                api_key: "OCTOPUS_API_KEY"
   build-information:
     description: Create and upload build-information to Octopus.
     usage:

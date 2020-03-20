@@ -2,12 +2,12 @@ commands:
   build-information:
     parameters:
       api_key:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
           username and password. If the guest account is enabled, a key of API-GUEST can be used. This
           key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
-        type: string
+        type: env_var_name
       config_file:
         default: ""
         description: '[Optional] Text file of default values, with one ''key = value''
@@ -39,11 +39,11 @@ commands:
           --package-id 'MyCompany.MyApp' --package-id 'MyCompany.MyApp2'.
         type: string
       pass:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Password to use when authenticating with the server. This Password can also be set
           in the OCTOPUS_CLI_PASSWORD environment variable.
-        type: string
+        type: env_var_name
       proxy:
         default: ""
         description: '[Optional] The URL of the proxy to use, e.g., ''https://proxy.example.com''.'
@@ -59,11 +59,11 @@ commands:
         description: '[Optional] The username for the proxy.'
         type: string
       server:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
           can also be set in the OCTOPUS_CLI_SERVER environment variable.
-        type: string
+        type: env_var_name
       space:
         default: ""
         description: '[Optional] The name or ID of a space within which this command
@@ -75,12 +75,12 @@ commands:
           is 600.'
         type: string
       user:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
           username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
           variable.
-        type: string
+        type: env_var_name
       version:
         description: null
         type: string
@@ -101,6 +101,12 @@ commands:
             fi
           }
 
+          get_env_value() {
+            if test "$2" != "NOT_PROVIDED"; then
+              PARAMS+=("--$1=${!2}")
+            fi
+          }
+
           cat >> << parameters.package_id >>.json \<<EOL
           {
             BuildEnvironment: "CircleCI",
@@ -115,14 +121,14 @@ commands:
 
           PARAMS=("--file=<< parameters.package_id >>.json")
 
-          get_string_value server "<< parameters.server >>"
-          get_string_value apiKey "<< parameters.api_key >>"
+          get_env_value server "<< parameters.server >>"
+          get_env_value apiKey "<< parameters.api_key >>"
           get_string_value space "<< parameters.space >>"
           get_string_value package-id "<< parameters.package_id >>"
           get_string_value version "<< parameters.version >>"
           get_string_value overwrite-mode "<< parameters.overwrite_mode >>"
-          get_string_value user "<< parameters.user >>"
-          get_string_value pass "<< parameters.pass >>"
+          get_env_value user "<< parameters.user >>"
+          get_env_value pass "<< parameters.pass >>"
           get_string_value configFile "<< parameters.config_file >>"
           get_string_value timeout "<< parameters.timeout >>"
           get_string_value proxy "<< parameters.proxy >>"
@@ -138,12 +144,12 @@ commands:
     description: Creates (and, optionally, deploys) a release.
     parameters:
       api_key:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
           username and password. If the guest account is enabled, a key of API-GUEST can be used. This
           key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
-        type: string
+        type: env_var_name
       cancel_on_timeout:
         default: false
         description: |
@@ -265,11 +271,11 @@ commands:
           [Optional] A folder containing packages from which we should get versions.
         type: string
       pass:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Password to use when authenticating with the server. This Password can also be set
           in the OCTOPUS_CLI_PASSWORD environment variable.
-        type: string
+        type: env_var_name
       progress:
         default: false
         description: |
@@ -313,11 +319,11 @@ commands:
           [Optional] Release number to use for the new release.
         type: string
       server:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
           can also be set in the OCTOPUS_CLI_SERVER environment variable.
-        type: string
+        type: env_var_name
       skip:
         default: ""
         description: |
@@ -353,12 +359,12 @@ commands:
           is 600.'
         type: string
       user:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
           username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
           variable.
-        type: string
+        type: env_var_name
       variable:
         default: ""
         description: |
@@ -390,8 +396,14 @@ commands:
             fi
           }
 
-          get_string_value server "<< parameters.server >>"
-          get_string_value apiKey "<< parameters.api_key >>"
+          get_env_value() {
+            if test "$2" != "NOT_PROVIDED"; then
+              PARAMS+=("--$1=${!2}")
+            fi
+          }
+
+          get_env_value server "<< parameters.server >>"
+          get_env_value apiKey "<< parameters.api_key >>"
           get_string_value project "<< parameters.project >>"
           get_string_value packageversion "<< parameters.package_version >>"
           get_string_value releaseNumber "<< parameters.release_number >>"
@@ -423,8 +435,8 @@ commands:
           get_string_value tenant "<< parameters.tenant >>"
           get_string_value tenanttag "<< parameters.tenant_tag >>"
           get_string_value deployto "<< parameters.deploy_to >>"
-          get_string_value user "<< parameters.user >>"
-          get_string_value pass "<< parameters.pass >>"
+          get_env_value user "<< parameters.user >>"
+          get_env_value pass "<< parameters.pass >>"
           get_string_value configFile "<< parameters.config_file >>"
           get_string_value timeout "<< parameters.timeout >>"
           get_string_value proxy "<< parameters.proxy >>"
@@ -445,12 +457,12 @@ commands:
     description: Deploys a release.
     parameters:
       api_key:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
           username and password. If the guest account is enabled, a key of API-GUEST can be used. This
           key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
-        type: string
+        type: env_var_name
       cancel_on_timeout:
         default: false
         description: |
@@ -539,11 +551,11 @@ commands:
           [Optional] Don't print the raw log of failed tasks.
         type: boolean
       pass:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Password to use when authenticating with the server. This Password can also be set
           in the OCTOPUS_CLI_PASSWORD environment variable.
-        type: string
+        type: env_var_name
       progress:
         default: false
         description: |
@@ -578,11 +590,11 @@ commands:
           Version number of the release to deploy. Or specify latest for the latest release.
         type: string
       server:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
           can also be set in the OCTOPUS_CLI_SERVER environment variable.
-        type: string
+        type: env_var_name
       skip:
         default: ""
         description: |
@@ -623,12 +635,12 @@ commands:
           Overwrite the variable snapshot for the release by re-importing the variables from the project.
         type: boolean
       user:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
           username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
           variable.
-        type: string
+        type: env_var_name
       variable:
         default: ""
         description: |
@@ -655,6 +667,12 @@ commands:
             fi
           }
 
+          get_env_value() {
+            if test "$2" != "NOT_PROVIDED"; then
+              PARAMS+=("--$1=${!2}")
+            fi
+          }
+
           get_string_value project "<< parameters.project >>"
           get_string_value releaseNumber "<< parameters.release_number >>"
           get_string_value channel "<< parameters.channel >>"
@@ -678,10 +696,10 @@ commands:
           get_string_value tenanttag "<< parameters.tenant_tag >>"
           get_string_value deployto "<< parameters.deploy_to >>"
           get_switch_value updateVariables "<< parameters.update_variables >>"
-          get_string_value server "<< parameters.server >>"
-          get_string_value apiKey "<< parameters.api_key >>"
-          get_string_value user "<< parameters.user >>"
-          get_string_value pass "<< parameters.pass >>"
+          get_env_value server "<< parameters.server >>"
+          get_env_value apiKey "<< parameters.api_key >>"
+          get_env_value user "<< parameters.user >>"
+          get_env_value pass "<< parameters.pass >>"
           get_string_value configFile "<< parameters.config_file >>"
           get_string_value timeout "<< parameters.timeout >>"
           get_string_value proxy "<< parameters.proxy >>"
@@ -822,12 +840,12 @@ commands:
     description: Promotes a release.
     parameters:
       api_key:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
           username and password. If the guest account is enabled, a key of API-GUEST can be used. This
           key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
-        type: string
+        type: env_var_name
       cancel_on_timeout:
         default: false
         description: |
@@ -909,11 +927,11 @@ commands:
           [Optional] Don't print the raw log of failed tasks.
         type: boolean
       pass:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Password to use when authenticating with the server. This Password can also be set
           in the OCTOPUS_CLI_PASSWORD environment variable.
-        type: string
+        type: env_var_name
       progress:
         default: false
         description: |
@@ -943,11 +961,11 @@ commands:
           [Optional] Redirect the raw log of failed tasks to a file.
         type: string
       server:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
           can also be set in the OCTOPUS_CLI_SERVER environment variable.
-        type: string
+        type: env_var_name
       skip:
         default: ""
         description: |
@@ -992,12 +1010,12 @@ commands:
           Overwrite the variable snapshot for the release by re-importing the variables from the project.
         type: boolean
       user:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
           username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
           variable.
-        type: string
+        type: env_var_name
       variable:
         default: ""
         description: |
@@ -1024,6 +1042,12 @@ commands:
             fi
           }
 
+          get_env_value() {
+            if test "$2" != "NOT_PROVIDED"; then
+              PARAMS+=("--$1=${!2}")
+            fi
+          }
+
           get_string_value project "<< parameters.project >>"
           get_string_value from "<< parameters.from >>"
           get_string_value to "<< parameters.to >>"
@@ -1046,10 +1070,10 @@ commands:
           get_string_value nodeployafter "<< parameters.no_deploy_after >>"
           get_string_value tenant "<< parameters.tenant >>"
           get_string_value tenanttag "<< parameters.tenant_tag >>"
-          get_string_value server "<< parameters.server >>"
-          get_string_value apiKey "<< parameters.api_key >>"
-          get_string_value user "<< parameters.user >>"
-          get_string_value pass "<< parameters.pass >>"
+          get_env_value server "<< parameters.server >>"
+          get_env_value apiKey "<< parameters.api_key >>"
+          get_env_value user "<< parameters.user >>"
+          get_env_value pass "<< parameters.pass >>"
           get_string_value configFile "<< parameters.config_file >>"
           get_string_value timeout "<< parameters.timeout >>"
           get_string_value proxy "<< parameters.proxy >>"
@@ -1068,12 +1092,12 @@ commands:
       NuGet repository in an Octopus Server.
     parameters:
       api_key:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
           username and password. If the guest account is enabled, a key of API-GUEST can be used. This
           key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
-        type: string
+        type: env_var_name
       config_file:
         default: ""
         description: '[Optional] Text file of default values, with one ''key = value''
@@ -1105,11 +1129,11 @@ commands:
         description: Package file to push.
         type: string
       pass:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Password to use when authenticating with the server. This Password can also be set
           in the OCTOPUS_CLI_PASSWORD environment variable.
-        type: string
+        type: env_var_name
       proxy:
         default: ""
         description: '[Optional] The URL of the proxy to use, e.g., ''https://proxy.example.com''.'
@@ -1125,11 +1149,11 @@ commands:
         description: '[Optional] The username for the proxy.'
         type: string
       server:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
           can also be set in the OCTOPUS_CLI_SERVER environment variable.
-        type: string
+        type: env_var_name
       space:
         default: ""
         description: '[Optional] The name or ID of a space within which this command
@@ -1147,12 +1171,12 @@ commands:
           or False. Defaults to true.)
         type: boolean
       user:
-        default: ""
+        default: NOT_PROVIDED
         description: |
           [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
           username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
           variable.
-        type: string
+        type: env_var_name
     steps:
     - run:
         command: |
@@ -1168,14 +1192,20 @@ commands:
             fi
           }
 
-          get_string_value server "<< parameters.server >>"
-          get_string_value apiKey "<< parameters.api_key >>"
+          get_env_value() {
+            if test "$2" != "NOT_PROVIDED"; then
+              PARAMS+=("--$1=${!2}")
+            fi
+          }
+
+          get_env_value server "<< parameters.server >>"
+          get_env_value apiKey "<< parameters.api_key >>"
           get_string_value space "<< parameters.space >>"
           get_string_value package "<< parameters.package >>"
           get_string_value overwrite-mode "<< parameters.overwrite_mode >>"
           get_string_value use-delta-compression "<< parameters.use_delta_compression >>"
-          get_string_value user "<< parameters.user >>"
-          get_string_value pass "<< parameters.pass >>"
+          get_env_value user "<< parameters.user >>"
+          get_env_value pass "<< parameters.pass >>"
           get_string_value configFile "<< parameters.config_file >>"
           get_string_value timeout "<< parameters.timeout >>"
           get_string_value proxy "<< parameters.proxy >>"
@@ -1185,6 +1215,7 @@ commands:
           get_switch_value ignoreSslErrors "<< parameters.ignore_ssl_errors >>"
           get_switch_value debug "<< parameters.debug >>"
 
+          echo octo push "${PARAMS[@]}"
           octo push "${PARAMS[@]}"
         name: Push << parameters.package >>
 description: |
@@ -1307,9 +1338,9 @@ examples:
           - octo-exp/install-tools
           - checkout
           - octo-exp/push:
-              api_key: API-YOURAPIKEY
+              api_key: OCTOPUS_API_KEY
               package: package/OctopusSamples.OctoPetShop.Database.1.2.3.zip
-              server: https://youroctopusserver.com
+              server: OCTOPUS_SERVER_URL
       orbs:
         octo-exp: octopus-samples/octo-exp@0.0.3
       version: 2.1

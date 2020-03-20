@@ -130,31 +130,31 @@ parameters:
     description: "[Optional] The name or ID of a space within which this command will be executed. The default space will be used if it is omitted."
     default: ""
   server:
-    type: string
+    type: env_var_name
     description: |
       [Optional] The base URL for your Octopus Server, e.g., 'https://octopus.example.com/'. This URL
       can also be set in the OCTOPUS_CLI_SERVER environment variable.
-    default: ""
+    default: "NOT_PROVIDED"
   api_key:
-    type: string
+    type: env_var_name
     description: |
       [Optional] Your API key. Get this from the user profile page. Your must provide an apiKey or
       username and password. If the guest account is enabled, a key of API-GUEST can be used. This
       key can also be set in the OCTOPUS_CLI_API_KEY environment variable.
-    default: ""
+    default: "NOT_PROVIDED"
   user:
-    type: string
+    type: env_var_name
     description: |
       [Optional] Username to use when authenticating with the server. Your must provide an apiKey or
       username and password. This Username can also be set in the OCTOPUS_CLI_USERNAME environment
       variable.
-    default: ""
+    default: "NOT_PROVIDED"
   pass:
-    type: string
+    type: env_var_name
     description: |
       [Optional] Password to use when authenticating with the server. This Password can also be set
       in the OCTOPUS_CLI_PASSWORD environment variable.
-    default: ""
+    default: "NOT_PROVIDED"
   config_file:
     type: string
     description: "[Optional] Text file of default values, with one 'key = value' per line."
@@ -209,6 +209,12 @@ steps:
           fi
         }
 
+        get_env_value() {
+          if test "$2" != "NOT_PROVIDED"; then
+            PARAMS+=("--$1=${!2}")
+          fi
+        }
+
         get_string_value project "<< parameters.project >>"
         get_string_value releaseNumber "<< parameters.release_number >>"
         get_string_value channel "<< parameters.channel >>"
@@ -232,10 +238,10 @@ steps:
         get_string_value tenanttag "<< parameters.tenant_tag >>"
         get_string_value deployto "<< parameters.deploy_to >>"
         get_switch_value updateVariables "<< parameters.update_variables >>"
-        get_string_value server "<< parameters.server >>"
-        get_string_value apiKey "<< parameters.api_key >>"
-        get_string_value user "<< parameters.user >>"
-        get_string_value pass "<< parameters.pass >>"
+        get_env_value server "<< parameters.server >>"
+        get_env_value apiKey "<< parameters.api_key >>"
+        get_env_value user "<< parameters.user >>"
+        get_env_value pass "<< parameters.pass >>"
         get_string_value configFile "<< parameters.config_file >>"
         get_string_value timeout "<< parameters.timeout >>"
         get_string_value proxy "<< parameters.proxy >>"
