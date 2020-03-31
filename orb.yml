@@ -87,8 +87,6 @@ commands:
     steps:
     - run:
         command: |
-          apt -y install git curl jq
-
           get_string_value() {
             if test "$2"; then
               PARAMS+=("--$1=$2")
@@ -726,10 +724,10 @@ commands:
     steps:
     - run:
         command: |
-          apt update && apt -y install --no-install-recommends software-properties-common gnupg apt-transport-https
-          apt-key adv --fetch-keys https://apt.octopus.com/public.key
-          add-apt-repository "deb https://apt.octopus.com/ stretch main"
-          apt update && apt -y install octopuscli
+          sudo apt update && sudo apt -y install --no-install-recommends software-properties-common gnupg apt-transport-https
+          sudo apt-key adv --fetch-keys https://apt.octopus.com/public.key
+          sudo add-apt-repository "deb https://apt.octopus.com/ stretch main"
+          sudo apt update && sudo apt -y install octopuscli
         name: Install Octo CLI
   pack:
     description: Creates a package (.nupkg or .zip) from files on disk, without needing
@@ -1347,14 +1345,8 @@ examples:
 executors:
   default:
     description: |
-      Use the Ubuntu image by default
+      Use the base CircleCI image by default
     docker:
-    - image: ubuntu:<<parameters.tag>>
-    parameters:
-      tag:
-        default: "18.04"
-        description: |
-          Tag of the Ubuntu image to use.
-        type: string
+    - image: cimg/base:stable
 version: 2.1
 

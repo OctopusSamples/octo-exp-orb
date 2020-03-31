@@ -9,16 +9,9 @@ display:
 executors:
   default:
     description: |
-      Use the Ubuntu image by default
+      Use the base CircleCI image by default
     docker:
-      - image: ubuntu:<<parameters.tag>>
-    parameters:
-      tag:
-        default: "18.04"
-        description: |
-          Tag of the Ubuntu image to use.
-        type: string
-
+      - image: cimg/base:stable
 examples:
   install-tools:
     description: Install the Octo CLI on the container.

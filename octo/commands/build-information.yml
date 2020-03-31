@@ -83,8 +83,6 @@ steps:
   - run:
       name: "Push build information for << parameters.package_id >>"
       command: |
-        apt -y install git curl jq
-
         get_string_value() {
           if test "$2"; then
             PARAMS+=("--$1=$2")
