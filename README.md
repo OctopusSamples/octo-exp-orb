@@ -1,6 +1,8 @@
 # octo-exp-orb
 
-Experimental orb for CircleCI
+Experimental orb for working with the Octopus CLI. This orb is provided as-is, with no support available.
+
+Email circleci@octopus.com if you have questions about the orb.
 
 This is a proof of concept orb for integrating CircleCI and Octopus Deploy.
 
