@@ -31,5 +31,6 @@ workflows:
           publish-alpha-version: false
           publish-sha-version: false
           publish-branch-sha-version: true
+          branch-sha-version-ref: "dev:$CIRCLE_BRANCH"
           requires:
             - orb-tools/lint

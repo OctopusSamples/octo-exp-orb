@@ -1,7 +1,9 @@
 version: 2.1
 
 description: |
-  Experimental orb for working with the Octopus CLI.
+  Experimental orb for working with the Octopus CLI. This orb is provided as-is, with no support available.
+
+  Email circleci@octopus.com if you have questions about the orb.
 display:
   source_url: https://github.com/OctopusSamples/octo-exp-orb
   home_url: https://github.com/OctopusSamples/octo-exp-orb
@@ -9,16 +11,9 @@ display:
 executors:
   default:
     description: |
-      Use the Ubuntu image by default
+      Use the base CircleCI image by default
     docker:
-      - image: ubuntu:<<parameters.tag>>
-    parameters:
-      tag:
-        default: "18.04"
-        description: |
-          Tag of the Ubuntu image to use.
-        type: string
-
+      - image: cimg/base:stable
 examples:
   install-tools:
     description: Install the Octo CLI on the container.
@@ -66,8 +61,8 @@ examples:
             - checkout
             - octo-exp/push:
                 package: "package/OctopusSamples.OctoPetShop.Database.1.2.3.zip"
-                server: "https://youroctopusserver.com"
-                api_key: "API-YOURAPIKEY"
+                server: "OCTOPUS_SERVER_URL"
+                api_key: "OCTOPUS_API_KEY"
   build-information:
     description: Create and upload build-information to Octopus.
     usage:
@@ -83,8 +78,8 @@ examples:
             - octo-exp/build-information:
                 package_id: "OctopusSamples.OctoPetShop.Database"
                 version: "1.2.3"
-                server: "https://youroctopusserver.com"
-                api_key: "API-YOURAPIKEY"
+                server: "OCTOPUS_SERVER_URL"
+                api_key: "OCTOPUS_API_KEY"
   create-release:
     description: Create an Octopus release.
     usage:
@@ -100,8 +95,8 @@ examples:
             - octo-exp/create-release:
                 project: "OctoPetShop"
                 release_number: "1.2.3"
-                server: "https://youroctopusserver.com"
-                api_key: "API-YOURAPIKEY"
+                server: "OCTOPUS_SERVER_URL"
+                api_key: "OCTOPUS_API_KEY"
   deploy-release:
     description: Deploy an existing Octopus release.
     usage:
@@ -119,8 +114,8 @@ examples:
                 release_number: "1.2.3"
                 deploy_to: "Development"
                 progress: true
-                server: "https://youroctopusserver.com"
-                api_key: "API-YOURAPIKEY"
+                server: "OCTOPUS_SERVER_URL"
+                api_key: "OCTOPUS_API_KEY"
   promote-release:
     description: Promote a release in one environment to another.
     usage:
@@ -138,5 +133,5 @@ examples:
                 from: "Development"
                 to: "Test"
                 progress: true
-                server: "https://youroctopusserver.com"
-                api_key: "API-YOURAPIKEY"
+                server: "OCTOPUS_SERVER_URL"
+                api_key: "OCTOPUS_API_KEY"
